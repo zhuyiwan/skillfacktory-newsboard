@@ -1,0 +1,69 @@
+from django.contrib.auth.models import User
+primary_user = User.objects.create_user('primary_user')
+secondary_user = User.objects.create_user('secondary_user')
+
+from notes.models import Profiles, Notes
+
+profile_primary = Profiles.objects.create(
+    user = primary_user,
+    role = 'Руководитель',
+    )
+    
+profile_secondary = Profiles.objects.create(
+    user = secondary_user,
+    role = 'Клиент',
+    )
+
+
+topic = Notes.objects.create(
+	title = "Проект по созданию CRM",
+	content = "CRM должна иметь возможность быть привязана к любому из элемента интеренет магазина, от фотографий и характеристик товара, до проектов распродаж и домукентов целиком",
+	rating = 0,
+	category = "Блок",
+	)
+
+topic_2 = Notes.objects.create(
+	title = "Проект по созданию бухгалтерского отчёта и документооборота",
+	content = "Система должна автоматически формировать небходимый документооборот и привязывать создавать на основе документов платёжные транзакции",
+	rating = 0,
+	category = "Блок",
+	)
+
+task = Notes.objects.create(
+	title = "Создать базу для CRM",
+	content = "Создать модели для дальнейшего заполнения и возможности универсальной привязки к любому объекты базы данных",
+	rating = 0,
+	category = "К выполнению",
+	)
+	
+comment = Notes.objects.create(
+	title = "comment",
+	content = "Мечтай",
+	notes_relations = topic,
+	rating = 0,
+	category = "Коментарий",
+	)
+
+comment_2 = Notes.objects.create(
+	title = "comment",
+	content = "Ничё не треснит",
+	notes_relations = comment,
+	rating = 0,
+	category = "Коментарий",
+	)
+
+comment_3 = Notes.objects.create(
+	title = "comment",
+	content = "На свою треснувшую посмотри",
+	notes_relations = comment_2,
+	rating = 0,
+	category = "Коментарий",
+	)
+
+comment_4 = Notes.objects.create(
+	title = "comment",
+	content = "Чё буровишь ",
+	notes_relations = comment_2,
+	rating = 0,
+	category = "Коментарий",
+	)

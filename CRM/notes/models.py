@@ -37,7 +37,7 @@ class CategoryType(models.TextChoices):
     comment = "Коментарий"
 
 class Notes(BasicModelTemplate):
-    created_by = models.ForeignKey(Profiles, on_delete=models.CASCADE, null=True, blank=True) 
+    created_by = models.ForeignKey(Profiles, on_delete=models.CASCADE) 
     title = models.CharField(max_length=100)
     content = models.TextField()
     notes_relations = models.ForeignKey('Notes', on_delete=models.CASCADE, related_name='note_parent', null=True, blank=True)
@@ -50,14 +50,14 @@ class Notes(BasicModelTemplate):
                 
     def _add_reaction(self, profile, reaction_value):
         try:
-            reaction = NotesReaction.objects.get(note=self, profile_id=profile)
+            reaction = NotesReaction.objects.get(note=self, profile=profile)
             reaction.reaction = reaction_value
             reaction.save()
 
         except NotesReaction.DoesNotExist:
             NotesReaction.objects.create(
                 note=self,
-                profile_id=profile,
+                profile=profile,
                 reaction=reaction_value
             )
 
@@ -75,9 +75,9 @@ class Notes(BasicModelTemplate):
         return self.title
 
 class NotesReaction(models.Model):
-    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
-    note_id = models.ForeignKey(Notes, on_delete=models.DO_NOTHING, related_name="notereactions_to_note")
-    profile_id = models.ForeignKey(Profiles, on_delete=models.DO_NOTHING, related_name="notereactions_to_profile")
+    id = models.UUIDField(default=uuid.uuid4, editable=True, primary_key=True)
+    note = models.ForeignKey(Notes, on_delete=models.DO_NOTHING, related_name="notereactions_to_note")
+    profile = models.ForeignKey(Profiles, on_delete=models.DO_NOTHING, related_name="notereactions_to_profile")
     reaction = models.IntegerField()
 
     class Meta:
@@ -85,7 +85,7 @@ class NotesReaction(models.Model):
         verbose_name_plural = ('note reactions')
       
         constraints = [
-                models.UniqueConstraint(fields=['note_id', 'profile_id'], name="unique_note_profile")
+                models.UniqueConstraint(fields=['note', 'profile'], name="unique_note_profile")
             ]
 
 

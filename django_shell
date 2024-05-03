@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 primary_user = User.objects.create_user('primary_user')
 secondary_user = User.objects.create_user('secondary_user')
+tertiary_user = User.objects.create_user('tertiary_user')
 
 from notes.models import Profiles, Notes
 
@@ -14,8 +15,13 @@ profile_secondary = Profiles.objects.create(
     role = 'Клиент',
     )
 
+profile_tertiary = Profiles.objects.create(
+    user = tertiary_user,
+    role = 'Работник',
+    )
 
 topic = Notes.objects.create(
+	created_by = profile_primary,
 	title = "Проект по созданию CRM",
 	content = "CRM должна иметь возможность быть привязана к любому из элемента интеренет магазина, от фотографий и характеристик товара, до проектов распродаж и домукентов целиком",
 	rating = 0,
@@ -23,6 +29,7 @@ topic = Notes.objects.create(
 	)
 
 topic_2 = Notes.objects.create(
+	created_by = profile_primary,
 	title = "Проект по созданию бухгалтерского отчёта и документооборота",
 	content = "Система должна автоматически формировать небходимый документооборот и привязывать создавать на основе документов платёжные транзакции",
 	rating = 0,
@@ -30,13 +37,16 @@ topic_2 = Notes.objects.create(
 	)
 
 task = Notes.objects.create(
+	created_by = profile_tertiary,
 	title = "Создать базу для CRM",
 	content = "Создать модели для дальнейшего заполнения и возможности универсальной привязки к любому объекты базы данных",
+	notes_relations = topic,
 	rating = 0,
 	category = "К выполнению",
 	)
 	
 comment = Notes.objects.create(
+	created_by = profile_secondary,
 	title = "comment",
 	content = "Мечтай",
 	notes_relations = topic,
@@ -45,14 +55,16 @@ comment = Notes.objects.create(
 	)
 
 comment_2 = Notes.objects.create(
+	created_by = profile_secondary,
 	title = "comment",
-	content = "Ничё не треснит",
-	notes_relations = comment,
+	content = "Ничё не треснет",
+	notes_relations = topic_2,
 	rating = 0,
 	category = "Коментарий",
 	)
 
 comment_3 = Notes.objects.create(
+	created_by = profile_primary,
 	title = "comment",
 	content = "На свою треснувшую посмотри",
 	notes_relations = comment_2,
@@ -61,9 +73,12 @@ comment_3 = Notes.objects.create(
 	)
 
 comment_4 = Notes.objects.create(
+	created_by = profile_tertiary,
 	title = "comment",
 	content = "Чё буровишь ",
 	notes_relations = comment_2,
 	rating = 0,
 	category = "Коментарий",
 	)
+
+task.like(profile_tertiary)

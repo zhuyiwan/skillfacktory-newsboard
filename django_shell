@@ -82,3 +82,4 @@ comment_4 = Notes.objects.create(
 	)
 
 task.like(profile_tertiary)
+task_2.like(profile_tertiary)

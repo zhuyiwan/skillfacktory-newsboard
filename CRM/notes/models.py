@@ -21,6 +21,9 @@ class Profiles(BasicModelTemplate):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     department = models.CharField(max_length=100, blank=True, null=True)
     role = models.CharField(max_length=20, choices=ProfilesRoles.choices)
+    raiting = models.IntegerField(default=0)
+
+    def renew_raiting(self):
 
     def __str__(self):
         return f"{self.user.username} - {self.role}"

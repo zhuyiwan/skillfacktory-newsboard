@@ -24,7 +24,6 @@ topic = Notes.objects.create(
 	created_by = profile_primary,
 	title = "Проект по созданию CRM",
 	content = "CRM должна иметь возможность быть привязана к любому из элемента интеренет магазина, от фотографий и характеристик товара, до проектов распродаж и домукентов целиком",
-	rating = 0,
 	category = "Блок",
 	)
 
@@ -32,7 +31,6 @@ topic_2 = Notes.objects.create(
 	created_by = profile_primary,
 	title = "Проект по созданию бухгалтерского отчёта и документооборота",
 	content = "Система должна автоматически формировать небходимый документооборот и привязывать создавать на основе документов платёжные транзакции",
-	rating = 0,
 	category = "Блок",
 	)
 
@@ -41,7 +39,6 @@ task = Notes.objects.create(
 	title = "Создать базу для CRM",
 	content = "Создать модели для дальнейшего заполнения и возможности универсальной привязки к любому объекты базы данных",
 	notes_relations = topic,
-	rating = 0,
 	category = "К выполнению",
 	)
 	
@@ -50,7 +47,6 @@ comment = Notes.objects.create(
 	title = "comment",
 	content = "Мечтай",
 	notes_relations = topic,
-	rating = 0,
 	category = "Коментарий",
 	)
 
@@ -59,7 +55,6 @@ comment_2 = Notes.objects.create(
 	title = "comment",
 	content = "Ничё не треснет",
 	notes_relations = topic_2,
-	rating = 0,
 	category = "Коментарий",
 	)
 
@@ -68,7 +63,6 @@ comment_3 = Notes.objects.create(
 	title = "comment",
 	content = "На свою треснувшую посмотри",
 	notes_relations = comment_2,
-	rating = 0,
 	category = "Коментарий",
 	)
 
@@ -77,9 +71,13 @@ comment_4 = Notes.objects.create(
 	title = "comment",
 	content = "Чё буровишь ",
 	notes_relations = comment_2,
-	rating = 0,
 	category = "Коментарий",
 	)
 
+topic.like(profile_tertiary)
+topic_2.like(profile_tertiary)
 task.like(profile_tertiary)
-task_2.like(profile_tertiary)
+comment_2.dislike(profile_tertiary)
+comment_2.dislike(profile_primary)
+
+profiles = Profiles.objects.all().order_by('likes')

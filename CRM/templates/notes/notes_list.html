@@ -1,0 +1,14 @@
+{% extends 'main_page.html' %}
+{% load my_filter %}
+{% block title %}
+    <title>CRM Notes</title>
+{% endblock title %}
+{% block content %}
+<h1>Список заметок</h1>
+{% if notes %}
+    {% for note in notes %}
+        <h4><a href={% url 'note_detals' note.id %}>{{ note.title|no_swear_words }}</a></h4>
+        <p>{{ note.content | truncatechars:20 |no_swear_words  }}</p>
+    {% endfor %}
+{% endif %}
+{% endblock content %}    

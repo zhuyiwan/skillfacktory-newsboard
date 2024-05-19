@@ -5,6 +5,15 @@
 {% endblock title %}
 {% block content %}
 <h1>Список заметок</h1>
+<div class='row'>
+<div class='col-1'>
+    <a href={% url 'note_create' %} class='btn btn-success'>Создать</a>
+</div>
+<form method="get" class='col-3'>
+    {{ form.as_p }}
+    <button type="submit">Отфильтровать</button>
+</form>
+</div>
 {% if notes %}
     {% for note in notes %}
         <h4><a href={% url 'note_detals' note.id %}>{{ note.title|no_swear_words }}</a></h4>

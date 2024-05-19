@@ -17,7 +17,6 @@ def replace_with_stars(word):
 @register.filter()
 def no_swear_words(basic_text):
     swear_words = load_swear_words('swear_words.txt')
-    modified_text=basic_text
     for word in swear_words:
         comparison = re.escape(word)
         basic_text = re.sub(comparison, replace_with_stars, basic_text, flags=re.IGNORECASE)

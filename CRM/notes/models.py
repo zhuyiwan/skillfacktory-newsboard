@@ -50,11 +50,11 @@ class Profiles(BasicModelTemplate):
 
 
 class CategoryType(models.TextChoices):
-    topic = "Проект" # Задумка
-    task = "Задача" # Воплощение
-    instruction = "Руководство" # Регламент
-    comment = "Коментарий" # Пиздёжь 
-    key_comment = "Фокус" # Пиздёжь по делу
+    TOPIC = "topic", "Проект" # Задумка
+    TASK = "task", "Задача" # Воплощение
+    INSTRUCTION = "instruction", "Руководство" # Регламент
+    COMMENT = "comment", "Коментарий" # Пиздёжь 
+    KEY_COMMENT = "key_comment", "Фокус" # Пиздёжь по делу
 
 class Notes(BasicModelTemplate):
     created_by = models.ForeignKey(Profiles, on_delete=models.CASCADE) 
@@ -64,6 +64,10 @@ class Notes(BasicModelTemplate):
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)
     # category = models.CharField(max_length=16, choices=CategoryType.choices)
+
+    def get_absolute_url(self):
+        return reverse("note_detals", kwargs={"pk": self.pk})
+    
 
     def renew_raiting(self):
         queryset = NotesReaction.objects.all()
@@ -104,7 +108,6 @@ class Notes(BasicModelTemplate):
                 self.created_by.likes += COEFICIENT[self.category]
             else:
                 self.created_by.dislikes += 1
-
 
     def like(self, profile):
         self._add_reaction(profile, 1)

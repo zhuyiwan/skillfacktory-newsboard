@@ -1,0 +1,15 @@
+{% extends 'main_page.html' %}
+{% load my_filter %}
+{% block title %}
+    <title>CRM Edit Note</title>
+{% endblock title %}
+{% block content %}
+<h1>Редактирование заметки</h1>
+
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Save" />
+</form>
+
+{% endblock content %}    

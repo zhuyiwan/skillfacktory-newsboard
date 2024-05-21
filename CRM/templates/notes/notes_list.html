@@ -6,9 +6,11 @@
 {% block content %}
 <h1>Список заметок</h1>
 <div class='row'>
-<div class='col-1'>
+    {% if perms.notes.add_note %}
+    <div class='col-1'>
     <a href={% url 'note_create' %} class='btn btn-success'>Создать</a>
 </div>
+    {% endif %}
 <form method="get" class='col-3'>
     {{ form.as_p }}
     <button type="submit">Отфильтровать</button>

@@ -10,6 +10,20 @@
         <div class="container">
             <a href={% url 'main_page' %}><img height='50' src="{% static 'pics/logo-skillfactory-large.jpg' %}" alt="photo"></a>
         </div>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_login' %}">Login</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
     </nav>
     <div id="content" name="content">
         {% block content %}

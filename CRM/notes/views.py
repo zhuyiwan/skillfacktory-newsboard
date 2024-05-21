@@ -11,6 +11,7 @@ from .models import Notes, NoteStructureModel
 
 
 class NotesListView(LoginRequiredMixin, ListView):
+    # permission_required = ()
     model = Notes
     ordering ='created_at'
     template_name = 'notes/notes_list.html'
@@ -28,8 +29,7 @@ class NotesListView(LoginRequiredMixin, ListView):
         context['form'] = TopicTaskForm(self.request.GET or None)
         return context
 
-class NoteDetailsView(PermissionRequiredMixin, DetailView):
-    permission_required = ('notes.view_note', 'notes.change_note',)
+class NoteDetailsView(DetailView):
     model = Notes
     template_name = 'notes/notes_details.html'
     context_object_name = "note"

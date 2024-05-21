@@ -5,6 +5,8 @@
 {% endblock title %}
 {% block content %}
 <h3>{{ note.title|no_swear_words }}</h3>
+{% if perm.notes.view_note %}
     <a href={% url 'note_update' note.id %} class='btn btn-secondary'>Редактировать</a>
+    {% endif %}
 <p>{{ note.content|no_swear_words  }}</p>
 {% endblock content %}

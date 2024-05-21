@@ -1,7 +1,8 @@
 from typing import Any
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.db import transaction
-from django.db.models.query import QuerySet
-from django.shortcuts import render, redirect
+# from django.db.models.query import QuerySet
+from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView, CreateView, View, UpdateView
 from django.urls import reverse_lazy
 
@@ -9,7 +10,7 @@ from .forms import NotesForm, TopicTaskForm
 from .models import Notes, NoteStructureModel
 
 
-class NotesListView(ListView):
+class NotesListView(LoginRequiredMixin, ListView):
     model = Notes
     ordering ='created_at'
     template_name = 'notes/notes_list.html'
@@ -27,7 +28,8 @@ class NotesListView(ListView):
         context['form'] = TopicTaskForm(self.request.GET or None)
         return context
 
-class NoteDetailsView(DetailView):
+class NoteDetailsView(PermissionRequiredMixin, DetailView):
+    permission_required = ('notes.view_note', 'notes.change_note',)
     model = Notes
     template_name = 'notes/notes_details.html'
     context_object_name = "note"
@@ -39,7 +41,8 @@ class NoteDetailsView(DetailView):
         return context
 
 
-class NoteCreateView(CreateView):
+class NoteCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = ('notes.add_note',)
     model = Notes
     form_class = NotesForm
     context_object_name = 'note'
@@ -51,7 +54,7 @@ class NoteCreateView(CreateView):
     def form_valid(self, form):
         with transaction.atomic():
             note = form.save(commit=False)
-            note.created_by = self.request.user.profile
+            note.created_by = self.request.user.profiles
             note.save()
 
             note_structure = NoteStructureModel(
@@ -64,7 +67,8 @@ class NoteCreateView(CreateView):
         return redirect(note.get_absolute_url())
 
 
-class NoteUpdateView(UpdateView):
+class NoteUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('notes.change_note',)
     model = Notes
     form_class = NotesForm
     context_object_name = 'note'

@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 import uuid
+from django.urls import reverse
 
 # Create your models here.
 class BasicModelTemplate(models.Model):
@@ -60,10 +61,8 @@ class Notes(BasicModelTemplate):
     created_by = models.ForeignKey(Profiles, on_delete=models.CASCADE) 
     title = models.CharField(max_length=100)
     content = models.TextField()
-    # notes_relations = models.ForeignKey('Notes', on_delete=models.CASCADE, related_name='note_parent', null=True, blank=True)
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)
-    # category = models.CharField(max_length=16, choices=CategoryType.choices)
 
     def get_absolute_url(self):
         return reverse("note_detals", kwargs={"pk": self.pk})
@@ -137,7 +136,7 @@ class NoteStructureModel(BasicModelTemplate):
     '''
     root_note = models.ForeignKey(Notes, on_delete=models.DO_NOTHING, related_name="note_structure_root")
     parent_note =  models.ForeignKey(Notes, on_delete=models.DO_NOTHING, related_name="note_structure_parent") 
-    current_note =  models.ForeignKey(Notes, on_delete=models.DO_NOTHING, related_name="note_structure_current")
+    current_note =  models.ForeignKey(Notes, on_delete=models.CASCADE, related_name="note_structure_current")
     category = models.CharField(max_length=16, choices=CategoryType.choices)
 
 class NotesReaction(models.Model):

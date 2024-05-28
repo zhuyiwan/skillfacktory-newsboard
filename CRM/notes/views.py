@@ -1,13 +1,15 @@
 from typing import Any
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
-# from django.db.models.query import QuerySet
-from django.shortcuts import redirect
+from django.db.models import Exists, OuterRef
+from django.shortcuts import redirect, render
+from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView, DetailView, CreateView, View, UpdateView
 from django.urls import reverse_lazy
 
 from .forms import NotesForm, TopicTaskForm
-from .models import Notes, NoteStructureModel
+from .models import Notes, NoteStructureModel, Subscription
 
 
 class NotesListView(LoginRequiredMixin, ListView):
@@ -92,3 +94,26 @@ class NoteUpdateView(PermissionRequiredMixin, UpdateView):
             notes_structure.save()
         return super().form_valid(form)
     
+
+@login_required
+@csrf_protect
+def subscriptions(request):
+    if request.method == 'POST':
+        topic_id = request.POST.get('topic_id')
+        note = Notes.objects.get(id=topic_id)
+        action = request.POST.get('action')
+
+        if action == 'subscribe':
+            Subscription.objects.create(user=request.user, topic_root=topic_id)
+        elif action == 'unsubscribe':
+            Subscription.objects.filter(
+                user=request.user,
+                topic_root=topic_id,
+            )
+
+    notes_with_subscription = Notes.objects.annotate(
+        user_subscribed = Exists(
+            Subscription.objects.filter(urser=request.user, topic_root=OuterRef('pk'))
+        )
+    ).order_by('name')
+    return render(request, 'subscription.html', {'notes': notes_with_subscription})

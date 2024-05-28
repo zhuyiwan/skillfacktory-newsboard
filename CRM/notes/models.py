@@ -216,3 +216,7 @@ class NotesToProfiles(BasicModelTemplate):
 
     def __str__(self):
         return f"{self.profile_id.user.username} - {self.note_id.title} ({self.role})"
+    
+class Subscription(models.Model):
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='subscriptions')
+    topic_root = models.ForeignKey(to=Notes, on_delete=models.CASCADE, related_name='subscriptions')

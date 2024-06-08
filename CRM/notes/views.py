@@ -2,7 +2,7 @@ from typing import Any
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Q, F
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView, DetailView, CreateView, View, UpdateView
@@ -38,8 +38,14 @@ class NoteDetailsView(DetailView):
 
     # Нам нужно выводить только коментарии которые ссылаются непосредственно на эту статью.
     def get_context_data(self, **kwargs):
+        note = self.get_object()
         context = super().get_context_data(**kwargs)
-        context['name'] = 'name'
+        # context['name'] = 'name'
+
+        condition = Q(root_note=note) & ~Q(root_note=F('current_note'))
+        notes_tree = NoteStructureModel.objects.filter(condition).prefetch_related('current_note')
+        context['comments'] = notes_tree
+
         return context
 
 

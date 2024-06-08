@@ -9,7 +9,7 @@ from django.views.generic import ListView, DetailView, CreateView, View, UpdateV
 from django.urls import reverse_lazy
 
 from .forms import NotesForm, TopicTaskForm
-from .models import Notes, NoteStructureModel, Subscription
+from .models import Notes, NoteStructureModel, Subscription, CategoryType
 
 
 class NotesListView(LoginRequiredMixin, ListView):
@@ -111,9 +111,11 @@ def subscriptions(request):
                 topic_root=topic_id,
             )
 
-    notes_with_subscription = Notes.objects.annotate(
-        user_subscribed = Exists(
-            Subscription.objects.filter(urser=request.user, topic_root=OuterRef('pk'))
+    notes_with_subscription = Notes.objects.filter(
+        note_structure_current__category__in=[CategoryType.TOPIC, CategoryType.TASK]
+        ).annotate(
+            user_subscribed = Exists(
+                Subscription.objects.filter(user=request.user, topic_root=OuterRef('pk'))
         )
-    ).order_by('name')
+    ).order_by('title')
     return render(request, 'subscription.html', {'notes': notes_with_subscription})

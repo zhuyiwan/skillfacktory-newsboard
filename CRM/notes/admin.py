@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Notes, NoteStructureModel
+from .models import Notes, NoteStructureModel, Subscription
 # Register your models here.
 
 class NoteStructureModelInLine(admin.TabularInline):
@@ -13,3 +13,7 @@ class NotesAdmin(admin.ModelAdmin):
     inlines = [
         NoteStructureModelInLine,
     ]
+
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    pass

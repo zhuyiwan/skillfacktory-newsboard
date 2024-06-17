@@ -8,14 +8,15 @@
 <p>{{ note.content|no_swear_words  }}</p>
 {% if perms.notes.view_note %}
     <a href={% url 'note_update' note.id %} class='btn btn-secondary'>Редактировать</a>
-    <a href={% url 'note_create' %} class='btn btn-secondary'>Ответить</a>
+    <a href={% url 'note_create' %}?parent_note={{ note.id }}&root_note={{ note.id }} class='btn btn-secondary'>Ответить</a>
     {% endif %}
     <br><br>
     <ul>
     {% for comment in comments %}
         <li>{{ comment.current_note.content }} 
-            <button>редактировать</button>
-            <a href={% url 'note_create' %} class='btn btn-secondary'>Ответить</a>
+            <a href={% url 'note_update' comment.current_note.id %} class="btn btn-outline-secondary">редактировать</a>
+            <a href={% url 'note_create' %}?parent_note={{ comment.current_note.id }}&root_note={{ note.id }} class='btn btn-outline-secondary'>
+                Ответить</a>
         </li>
     {% endfor %}
     </ul>

@@ -3,17 +3,22 @@ from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMix
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Exists, OuterRef, Q, F
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
+from django.http import Http404
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView, DetailView, CreateView, View, UpdateView
 from django.urls import reverse_lazy
 
 from .forms import NotesForm, TopicTaskForm
 from .models import Notes, NoteStructureModel, Subscription, CategoryType
+from .tasks import hello
 
 
 class NotesListView(LoginRequiredMixin, ListView):
-    # permission_required = ()
+    # permission_required   = ()
+
+    hello
+
     model = Notes
     ordering ='created_at'
     template_name = 'notes/notes_list.html'
@@ -60,19 +65,58 @@ class NoteCreateView(PermissionRequiredMixin, CreateView):
         return reverse_lazy('note_detals', kwargs = {'pk': self.object.pk})
     
     def form_valid(self, form):
+        parent_note_id = self.request.GET.get('parent_note')
+        root_note_id = self.request.GET.get('root_note')
+        # category = form.cleaned_data['category']  
+
+        if parent_note_id and root_note_id:
+            try:
+                parent_note = get_object_or_404(Notes, pk=parent_note_id) if parent_note_id else None
+                root_note = get_object_or_404(Notes, pk=root_note_id) if root_note_id else None
+                category = CategoryType.COMMENT
+            except Notes.DoesNotExist:
+                # Logging.error
+                raise Http404("Одна из записей не найдена")
+        else:
+            category = form.cleaned_data.get('category')
+    
         with transaction.atomic():
             note = form.save(commit=False)
             note.created_by = self.request.user.profiles
             note.save()
 
+            # Переменные создаются вместе, поэтому достаточно проверить только одну.
+            try: 
+                parent_note
+            except NameError: 
+                parent_note = note
+                root_note = note
+
             note_structure = NoteStructureModel(
-                root_note=note,
-                parent_note=note,
+                root_note=root_note,
+                parent_note=parent_note,
                 current_note=note,
-                category=form.cleaned_data['category']
+                category=category,
             )
             note_structure.save()
-        return redirect(note.get_absolute_url())
+        if  category == CategoryType.COMMENT:
+            return redirect("note_detals", pk= root_note.id)
+        else:
+            return redirect(note.get_absolute_url())
+
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        query_params = self.request.GET
+
+        if query_params:
+            if 'title' in form.fields:
+                del form.fields['title']
+            if 'category' in form.fields:
+                del form.fields['category']
+
+        return form
+
 
 
 class NoteUpdateView(PermissionRequiredMixin, UpdateView):

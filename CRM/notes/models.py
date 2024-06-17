@@ -59,7 +59,7 @@ class CategoryType(models.TextChoices):
 
 class Notes(BasicModelTemplate):
     created_by = models.ForeignKey(Profiles, on_delete=models.CASCADE) 
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, null=True, blank=True)
     content = models.TextField()
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)

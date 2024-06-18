@@ -122,8 +122,15 @@ class Notes(BasicModelTemplate):
         verbose_name_plural = ('notes')
 
     def __str__(self):
-        return self.title
-    
+        if self.title:
+            return self.title
+        else:
+            try:
+                note_structure = self.note_structure_current.get()
+                root_note_title = note_structure.root_note.title if note_structure.root_note.title else "No Title"
+                return f'comment to: {root_note_title}'
+            except NoteStructureModel.DoesNotExist:
+                return f'Note ID: {self.id}'
 
 class NoteStructureModel(BasicModelTemplate):
     '''

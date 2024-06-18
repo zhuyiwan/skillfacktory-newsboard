@@ -154,13 +154,15 @@ def subscriptions(request):
         action = request.POST.get('action')
 
         if action == 'subscribe':
-            Subscription.objects.create(user=request.user, topic_root=topic_id)
+            Subscription.objects.create(user=request.user, topic_root=note)
         elif action == 'unsubscribe':
             Subscription.objects.filter(
                 user=request.user,
-                topic_root=topic_id,
-            )
+                topic_root=note,
+            ).delete()
 
+    # Это список, который выдаётся на странице.
+    # Мы собираем все проекты и задания. Дальше нам нужно будет отбросить завершённые... наверное.
     notes_with_subscription = Notes.objects.filter(
         note_structure_current__category__in=[CategoryType.TOPIC, CategoryType.TASK]
         ).annotate(

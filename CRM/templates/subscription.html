@@ -6,7 +6,18 @@
 {% block content %}
 <h1>Subscription</h3>
     {% for note in notes %}
-    <input type="checkbox" id="exampleCheckbox" name="exampleCheckbox"     {% if category.user_subscribed %}checked{% endif %}>
-    <label for="exampleCheckbox">{{ note }} </label><br>
+
+        {{ note }}
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="topic_id" value="{{ note.id }}" />
+            {% if note.user_subscribed %}
+                <button disabled>Подписаться</button>
+                <button name='action' value='unsubscribe'>Отписаться</button>
+            {% else %}
+                <button name='action' value='subscribe'>Подписаться</button>
+                <button disabled>Отписаться</button>
+            {% endif %}
+        </form>
     {% endfor %}
 {% endblock content %}

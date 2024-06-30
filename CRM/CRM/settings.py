@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'notes',
     'django_filters',
+    'scheduling',
 
 #allauth
     'allauth',
@@ -25,6 +26,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
     'django.contrib.sites',
+
+#Выполнение задач по расписанию
+    "django_apscheduler",
 ]
 
 # SITE_ID = 1

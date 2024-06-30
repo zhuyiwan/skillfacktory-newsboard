@@ -8,16 +8,21 @@ from django.http import Http404
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView, DetailView, CreateView, View, UpdateView
 from django.urls import reverse_lazy
+import redis
 
 from .forms import NotesForm, TopicTaskForm
 from .models import Notes, NoteStructureModel, Subscription, CategoryType
-from .tasks import hello
+from .tasks import hello, printer, send_ping
+from datetime import datetime, timedelta
 
 
 class NotesListView(LoginRequiredMixin, ListView):
     # permission_required   = ()
 
-    hello
+    hello.delay()
+    # send_ping.delay()
+    printer.apply_async([10], eta = datetime.now() + timedelta(seconds=5))
+
 
     model = Notes
     ordering ='created_at'

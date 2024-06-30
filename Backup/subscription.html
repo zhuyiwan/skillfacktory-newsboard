@@ -1,0 +1,12 @@
+{% extends 'main_page.html' %}
+{% load my_filter %}
+{% block title %}
+    <title>CRM Subscription</title>
+{% endblock title %}
+{% block content %}
+<h1>Subscription</h3>
+    {% for note in notes %}
+    <input type="checkbox" id="exampleCheckbox" name="exampleCheckbox"     {% if category.user_subscribed %}checked{% endif %}>
+    <label for="exampleCheckbox">{{ note }} </label><br>
+    {% endfor %}
+{% endblock content %}

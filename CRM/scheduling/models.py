@@ -1,5 +1,5 @@
 from django.db import models
-from CRM.notes.models import Notes
+# from CRM.notes.models import Notes
 from django.contrib.auth.models import User
 
 class Scheduler(models.Model):

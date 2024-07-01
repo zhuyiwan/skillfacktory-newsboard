@@ -1,5 +1,6 @@
 from django.db import models
-# from CRM.notes.models import Notes
+# from ]notes.models import Notes
+from notes.models import Notes
 from django.contrib.auth.models import User
 
 class Scheduler(models.Model):
@@ -7,7 +8,7 @@ class Scheduler(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     finished_at = models.DateTimeField(null = True)
     complete = models.BooleanField(default = False)
-    # notes = models.ManyToManyField(Notes, )
+    notes = models.ManyToManyField(Notes, )
 
 # class NotesScheduler(models.Model):
 #     notes = models.ForeignKey(Notes, on_delete = models.CASCADE)

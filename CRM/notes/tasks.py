@@ -19,3 +19,8 @@ def send_ping():
     client = redis.Redis(host='localhost', port=6379, db=0)
     response = client.ping()
     print("PING response:", response)
+
+@shared_task
+def note_created():
+    print('Note just was created')
+    # Нужно поднять список подписанных на заметку.

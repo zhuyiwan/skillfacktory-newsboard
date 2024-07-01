@@ -56,6 +56,7 @@ class CategoryType(models.TextChoices):
     INSTRUCTION = "instruction", "Руководство" # Регламент
     COMMENT = "comment", "Коментарий" # Пиздёжь 
     KEY_COMMENT = "key_comment", "Фокус" # Пиздёжь по делу
+    SCHEDULER = "scheduler", "Планировщик" # Ситуация на момнет дедлайна
 
 class Notes(BasicModelTemplate):
     created_by = models.ForeignKey(Profiles, on_delete=models.CASCADE) 
@@ -165,6 +166,34 @@ class NotesReaction(models.Model):
         return f"{self.note.title} - {self.profile.user.username} : {reaction}"
 
 
+
+class NotesRole(models.TextChoices):
+    owner = "Отвественный"
+    executor = "Исполнитель"
+    spectator = "Наблюдаель"
+    assignor = "Постановщик"
+
+class NotesToProfiles(BasicModelTemplate):
+    '''
+    Ориентируемся на будущее, когда для каждого задания нужно будет права доступа и действия
+    '''
+    note_id = models.ForeignKey(Notes, on_delete=models.CASCADE, related_name="notes_profiles")
+    profile_id = models.ForeignKey(Profiles, on_delete=models.CASCADE, related_name="profiles_notes")
+    role = models.CharField(max_length=20, choices=NotesRole.choices)  # Ссылка на роли из NotesRole
+
+    class Meta:
+        verbose_name = "Notes Profile Relation"
+        verbose_name_plural = "Notes Profile Relations"
+        unique_together = ("note_id", "profile_id")  # Уникальное сочетание note и profile для исключения дубликатов
+
+    def __str__(self):
+        return f"{self.profile_id.user.username} - {self.note_id.title} ({self.role})"
+    
+class Subscription(models.Model):
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='subscriptions')
+    topic_root = models.ForeignKey(to=Notes, on_delete=models.CASCADE, related_name='subscriptions')
+
+
 '''
 Теги должны быть раз. 
 Задаём тип тега, и в поле значения информацию о схеме, таблице, и ключе.
@@ -201,29 +230,3 @@ class NotesTagsConnection(BasicModelTemplate):
         verbose_name_plural = "tags connections"
 
 '''
-
-class NotesRole(models.TextChoices):
-    owner = "Отвественный"
-    executor = "Исполнитель"
-    spectator = "Наблюдаель"
-    assignor = "Постановщик"
-
-class NotesToProfiles(BasicModelTemplate):
-    '''
-    Ориентируемся на будущее, когда для каждого задания нужно будет права доступа и действия
-    '''
-    note_id = models.ForeignKey(Notes, on_delete=models.CASCADE, related_name="notes_profiles")
-    profile_id = models.ForeignKey(Profiles, on_delete=models.CASCADE, related_name="profiles_notes")
-    role = models.CharField(max_length=20, choices=NotesRole.choices)  # Ссылка на роли из NotesRole
-
-    class Meta:
-        verbose_name = "Notes Profile Relation"
-        verbose_name_plural = "Notes Profile Relations"
-        unique_together = ("note_id", "profile_id")  # Уникальное сочетание note и profile для исключения дубликатов
-
-    def __str__(self):
-        return f"{self.profile_id.user.username} - {self.note_id.title} ({self.role})"
-    
-class Subscription(models.Model):
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='subscriptions')
-    topic_root = models.ForeignKey(to=Notes, on_delete=models.CASCADE, related_name='subscriptions')

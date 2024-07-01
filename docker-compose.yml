@@ -17,4 +17,4 @@ services:
       - redis
     env_file:
       - .env
-    command: sh -c "celery -A CRM worker -l info"
+    command: sh -c "celery -A crm worker -l info"

@@ -1,6 +1,10 @@
 from celery import shared_task
 import time
 import redis
+from django.contrib.auth.models import User
+
+from .models import Subscription
+
 
 @shared_task
 def hello():
@@ -9,9 +13,21 @@ def hello():
 
 @shared_task
 def printer(N):
-    for i in range(N):
-        time.sleep(1)
-        print(i+1)
+    # for i in range(N):
+    #     time.sleep(1)
+    #     print(i+1)
+
+    users = User.objects.all()
+    subscriptions = Subscription.objects.all()
+    print(users)
+
+    for user in users:
+        user_subscription = subscriptions.filter(user = user)
+        if user_subscription:
+            print(user_subscription)
+
+    # emails = User.objects.filter(subscriptions__topic_root=root_note).values_list('email', flat=True)
+    # print(emails)
     print("Finished!")
 
 @shared_task

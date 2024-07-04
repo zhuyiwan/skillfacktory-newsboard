@@ -193,6 +193,9 @@ class Subscription(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='subscriptions')
     topic_root = models.ForeignKey(to=Notes, on_delete=models.CASCADE, related_name='subscriptions')
 
+    def __str__(self) -> str:
+        return f"{self.user} - {self.topic_root}"
+
 
 '''
 Теги должны быть раз. 

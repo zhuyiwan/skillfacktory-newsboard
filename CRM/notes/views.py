@@ -19,15 +19,16 @@ from datetime import datetime, timedelta
 class NotesListView(LoginRequiredMixin, ListView):
     # permission_required   = ()
 
-    hello.delay()
-    # send_ping.delay()
-    printer.apply_async([10], eta = datetime.now() + timedelta(seconds=5))
-
-
     model = Notes
     ordering ='created_at'
     template_name = 'notes/notes_list.html'
     context_object_name = 'notes'
+
+    def dispatch(self, request, *args, **kwargs):
+        # hello.delay()
+        printer.apply_async([10], eta = datetime.now() + timedelta(seconds=1))
+        return super().dispatch(request, *args, **kwargs)
+
 
     def get_queryset(self):
         category = self.request.GET.get('category')

@@ -13,21 +13,18 @@ def hello():
 
 @shared_task
 def printer(N):
-    # for i in range(N):
-    #     time.sleep(1)
-    #     print(i+1)
-
     users = User.objects.all()
     subscriptions = Subscription.objects.all()
-    print(users)
 
+    # Проверяем всех подписки которые ещё есть у пользователей
     for user in users:
         user_subscription = subscriptions.filter(user = user)
         if user_subscription:
+            # Извините, скорее всего оповещение буду прикручивать к телеграмму
+            # Не вижу смысла дублировать инфомрацию в почту. 
+            # Расслку при необходимости можно сделать по полному аналогу с сигналами
             print(user_subscription)
 
-    # emails = User.objects.filter(subscriptions__topic_root=root_note).values_list('email', flat=True)
-    # print(emails)
     print("Finished!")
 
 @shared_task

@@ -1,25 +1,28 @@
 {% extends 'main_page.html' %}
 {% load my_filter %}
+{% load cache %}
 {% block title %}
     <title>CRM Notes</title>
 {% endblock title %}
+{% cache 900 notes %}
 {% block content %}
-<h1>Список заметок</h1>
-<div class='row'>
-    {% if perms.notes.add_note %}
-    <div class='col-1'>
-    <a href={% url 'note_create' %} class='btn btn-success'>Создать</a>
-</div>
+    <h1>Список заметок</h1>
+    <div class='row'>
+        {% if perms.notes.add_note %}
+        <div class='col-1'>
+        <a href={% url 'note_create' %} class='btn btn-success'>Создать</a>
+    </div>
+        {% endif %}
+    <form method="get" class='col-3'>
+        {{ form.as_p }}
+        <button type="submit">Отфильтровать</button>
+    </form>
+    </div>
+    {% if notes %}
+        {% for note in notes %}
+            <h4><a href={% url 'note_detals' note.id %}>{{ note.title|no_swear_words }}</a></h4>
+            <p>{{ note.content | truncatechars:20 |no_swear_words  }}</p>
+        {% endfor %}
     {% endif %}
-<form method="get" class='col-3'>
-    {{ form.as_p }}
-    <button type="submit">Отфильтровать</button>
-</form>
-</div>
-{% if notes %}
-    {% for note in notes %}
-        <h4><a href={% url 'note_detals' note.id %}>{{ note.title|no_swear_words }}</a></h4>
-        <p>{{ note.content | truncatechars:20 |no_swear_words  }}</p>
-    {% endfor %}
-{% endif %}
 {% endblock content %}    
+{% endcache %}

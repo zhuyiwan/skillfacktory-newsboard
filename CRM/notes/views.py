@@ -1,4 +1,5 @@
 from typing import Any
+from django.core.cache import cache
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -46,6 +47,15 @@ class NoteDetailsView(DetailView):
     model = Notes
     template_name = 'notes/notes_details.html'
     context_object_name = "note"
+
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'product-{self.kwargs["pk"]}', None) 
+        # кэш очень похож на словарь, и метод get действует так же. Он забирает значение по ключу, если его нет, то забирает None.
+        # если объекта нет в кэше, то получаем его и записываем в кэш
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'product-{self.kwargs["pk"]}', obj)
+        return obj
 
     # Нам нужно выводить только коментарии которые ссылаются непосредственно на эту статью.
     def get_context_data(self, **kwargs):

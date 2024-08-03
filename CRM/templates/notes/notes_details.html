@@ -1,11 +1,14 @@
 {% extends 'main_page.html' %}
 {% load my_filter %}
+{% load cache %}
 {% block title %}
     <title>CRM Note Details</title>
 {% endblock title %}
 {% block content %}
+{% cache 3600 note_detales %}
 <h3>{{ note.title|no_swear_words }}</h3>
 <p>{{ note.content|no_swear_words  }}</p>
+{% endcache %}
 {% if perms.notes.view_note %}
     <a href={% url 'note_update' note.id %} class='btn btn-secondary'>Редактировать</a>
     <a href={% url 'note_create' %}?parent_note={{ note.id }}&root_note={{ note.id }} class='btn btn-secondary'>Ответить</a>

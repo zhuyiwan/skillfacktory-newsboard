@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.contrib.auth.models import User
 from django.db import models
 import uuid
@@ -65,9 +66,12 @@ class Notes(BasicModelTemplate):
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs) # сначала вызываем метод родителя, чтобы объект сохранился
+        cache.delete(f'note-{self.pk}') # затем удаляем его из кэша, чтобы сбросить его    
+
     def get_absolute_url(self):
         return reverse("note_detals", kwargs={"pk": self.pk})
-    
 
     def renew_raiting(self):
         queryset = NotesReaction.objects.all()

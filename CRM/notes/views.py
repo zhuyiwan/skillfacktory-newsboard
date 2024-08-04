@@ -13,7 +13,7 @@ import redis
 
 from .forms import NotesForm, TopicTaskForm
 from .models import Notes, NoteStructureModel, Subscription, CategoryType
-from .tasks import hello, printer, send_ping
+# from .tasks import hello, printer, send_ping
 from datetime import datetime, timedelta
 
 
@@ -27,7 +27,7 @@ class NotesListView(LoginRequiredMixin, ListView):
 
     def dispatch(self, request, *args, **kwargs):
         # hello.delay()
-        printer.apply_async([10], eta = datetime.now() + timedelta(seconds=1))
+        # printer.apply_async([10], eta = datetime.now() + timedelta(seconds=1))
         return super().dispatch(request, *args, **kwargs)
 
 

@@ -1,3 +1,6 @@
 celery
 redis
 django
+djangorestframework
+markdown      
+django-filter

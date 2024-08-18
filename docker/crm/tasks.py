@@ -16,6 +16,6 @@ def printer(N):
 
 @shared_task
 def send_ping():
-    client = redis.Redis(host='localhost', port=6379, db=0)
+    client = redis.Redis(host='redis', port=6379, db=0)
     response = client.ping()
     print("PING response:", response)
